@@ -17,6 +17,12 @@ import {
 	Divider,
 } from "@mui/material";
 import { login, fetchMe, fetchMyLogs, User, AuditLog } from "./api";
+import { useForm } from "react-hook-form";
+
+type LoginFormValues = {
+	email: string;
+	password: string;
+};
 
 function App() {
 	const [token, setToken] = useState<string | null>(() =>
@@ -24,10 +30,21 @@ function App() {
 	);
 	const [user, setUser] = useState<User | null>(null);
 	const [logs, setLogs] = useState<AuditLog[]>([]);
-	const [email, setEmail] = useState("test@test.com");
-	const [password, setPassword] = useState("password123");
+	// const [email, setEmail] = useState("test@test.com");
+	// const [password, setPassword] = useState("password123");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
+
+	const {
+		register,
+		handleSubmit,
+		formState: { errors },
+	} = useForm<LoginFormValues>({
+		defaultValues: {
+			email: "test@test.com",
+			password: "password123",
+		},
+	});
 
 	useEffect(() => {
 		if (!token) {
@@ -57,12 +74,31 @@ function App() {
 		void init();
 	}, [token]);
 
-	const handleLogin = async (e: React.FormEvent) => {
-		e.preventDefault();
+	// const handleLogin = async (e: React.FormEvent) => {
+	// 	e.preventDefault();
+	// 	try {
+	// 		setLoading(true);
+	// 		setError(null);
+	// 		const { token: newToken, user } = await login(email, password);
+	// 		setToken(newToken);
+	// 		localStorage.setItem("token", newToken);
+	// 		setUser(user);
+	// 	} catch (err: any) {
+	// 		setError(err.message || "Login failed");
+	// 	} finally {
+	// 		setLoading(false);
+	// 	}
+	// };
+	const handleLogin = async (values: LoginFormValues) => {
 		try {
 			setLoading(true);
 			setError(null);
-			const { token: newToken, user } = await login(email, password);
+
+			const { token: newToken, user } = await login(
+				values.email,
+				values.password,
+			);
+
 			setToken(newToken);
 			localStorage.setItem("token", newToken);
 			setUser(user);
@@ -95,23 +131,43 @@ function App() {
 							Use the demo credentials to sign in.
 						</Typography>
 
-						<Box component="form" onSubmit={handleLogin}>
+						<Box component="form" onSubmit={handleSubmit(handleLogin)}>
 							<Stack spacing={2}>
-								<TextField
+								{/* <TextField
 									label="Email"
 									type="email"
 									value={email}
 									onChange={e => setEmail(e.target.value)}
 									fullWidth
 									required
-								/>
+								/> */}
 								<TextField
+									label="Email"
+									type="email"
+									fullWidth
+									required
+									{...register("email", { required: "Email is required" })}
+									error={!!errors.email}
+									helperText={errors.email?.message}
+								/>
+								{/* <TextField
 									label="Password"
 									type="password"
 									value={password}
 									onChange={e => setPassword(e.target.value)}
 									fullWidth
 									required
+								/> */}
+								<TextField
+									label="Password"
+									type="password"
+									fullWidth
+									required
+									{...register("password", {
+										required: "Password is required",
+									})}
+									error={!!errors.password}
+									helperText={errors.password?.message}
 								/>
 
 								{error && <Alert severity="error">{error}</Alert>}
