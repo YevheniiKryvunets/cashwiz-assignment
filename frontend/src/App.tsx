@@ -30,8 +30,6 @@ function App() {
 	);
 	const [user, setUser] = useState<User | null>(null);
 	const [logs, setLogs] = useState<AuditLog[]>([]);
-	// const [email, setEmail] = useState("test@test.com");
-	// const [password, setPassword] = useState("password123");
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState<string | null>(null);
 
@@ -74,21 +72,6 @@ function App() {
 		void init();
 	}, [token]);
 
-	// const handleLogin = async (e: React.FormEvent) => {
-	// 	e.preventDefault();
-	// 	try {
-	// 		setLoading(true);
-	// 		setError(null);
-	// 		const { token: newToken, user } = await login(email, password);
-	// 		setToken(newToken);
-	// 		localStorage.setItem("token", newToken);
-	// 		setUser(user);
-	// 	} catch (err: any) {
-	// 		setError(err.message || "Login failed");
-	// 	} finally {
-	// 		setLoading(false);
-	// 	}
-	// };
 	const handleLogin = async (values: LoginFormValues) => {
 		try {
 			setLoading(true);
@@ -133,14 +116,6 @@ function App() {
 
 						<Box component="form" onSubmit={handleSubmit(handleLogin)}>
 							<Stack spacing={2}>
-								{/* <TextField
-									label="Email"
-									type="email"
-									value={email}
-									onChange={e => setEmail(e.target.value)}
-									fullWidth
-									required
-								/> */}
 								<TextField
 									label="Email"
 									type="email"
@@ -150,14 +125,6 @@ function App() {
 									error={!!errors.email}
 									helperText={errors.email?.message}
 								/>
-								{/* <TextField
-									label="Password"
-									type="password"
-									value={password}
-									onChange={e => setPassword(e.target.value)}
-									fullWidth
-									required
-								/> */}
 								<TextField
 									label="Password"
 									type="password"
